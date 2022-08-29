@@ -12,12 +12,17 @@ responses = []
 
 @app.route("/")
 def show_survey_start():
+    """Display survey home page - survey title, instructions"""
     title = surveys['satisfaction'].title
     instructions = surveys['satisfaction'].instructions
     return render_template("survey_start.html", title=title, instructions=instructions)
 
 @app.route("/questions/<int:num>")
 def display_question(num):
+    """Display question text and response choices,
+    automatically show the correct question if a user tries to manually change url,
+    show thank you if user has answered all questions
+    """
     if num == len(responses):
         title = surveys['satisfaction'].title
         question = surveys['satisfaction'].questions[num].question
@@ -32,6 +37,7 @@ def display_question(num):
 
 @app.route("/answer", methods=["POST"])
 def save_answer():
+    """Save answer to response list, redirect user to next question"""
     response = request.form.to_dict()
     keys = list(response.keys())
     values = list(response.values())
@@ -44,6 +50,7 @@ def save_answer():
 
 @app.route("/thank_you")
 def thank_you():
+    """Display thank you page if user has answered all questions"""
     if len(responses) == len(surveys['satisfaction'].questions):
         return render_template("thank_you.html")
     else:
